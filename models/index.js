@@ -22,5 +22,15 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
+const Album = require("./tutorial.album.js")(sequelize, Sequelize);
+const Artist = require("./tutorial.artist.js")(sequelize, Sequelize);
+
+// Define Association
+Artist.Albums = Artist.hasMany(Album, {
+  as: 'albums', foreignKey: 'artistId'
+})
+
+db.artist = Artist;
+db.album = Album;
 
 module.exports = db;

@@ -1,7 +1,6 @@
 const db = require("../models");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
-const sequelize = require('sequelize');
 
 // Create and Save a new tutorial
 exports.create = async (req,res) => {
@@ -19,32 +18,32 @@ exports.create = async (req,res) => {
     published: req.body.published ? req.body.published : false
   }
   
-  // try {
-  //   let result = await db.sequelize.transaction(async(t) => {
-  //     await Tutorial.create(tutorial, {transaction: t});
-  //   });
-  //   console.log('hit result');
-  //   console.log(result);
-  //   res.send(result);
-  // } catch (err){
-  //   // Rollback trnsaction only if the transaction object is defined
-  //   console.log(err);
-  //   res.status(500).send({
-  //     message: err.message || "SOme error occurred while create the Tutorial"
-  //   })
-  // }
+  try {
+    let result = await db.sequelize.transaction(async(t) => {
+      await Tutorial.create(tutorial, {transaction: t});
+    });
+    console.log('hit result');
+    console.log(result);
+    res.send(result);
+  } catch (err){
+    // Rollback trnsaction only if the transaction object is defined
+    console.log(err);
+    res.status(500).send({
+      message: err.message || "SOme error occurred while create the Tutorial"
+    })
+  }
   
 
   
   // Save Tutorial in the database
-  Tutorial.create(tutorial)
-    .then(data => {
-      res.send(data);
-    }).catch(err => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while create athe Tutorial"
-      })
-    })
+  // Tutorial.create(tutorial)
+  //   .then(data => {
+  //     res.send(data);
+  //   }).catch(err => {
+  //     res.status(500).send({
+  //       message: err.message || "Some error occurred while create athe Tutorial"
+  //     })
+  //   })
 };
 
 exports.findAll = (req, res) => {

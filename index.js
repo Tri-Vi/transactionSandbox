@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 require("./routes/tutorial.routes.js")(app);
+require("./routes/artist.routes.js")(app);
 
 
 // simple route
