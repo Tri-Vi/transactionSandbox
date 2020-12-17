@@ -25,16 +25,14 @@ exports.create = async (req,res) => {
     albums: req.body.albums,
   }
   
-
+  /*  Managed Transaction */
   try {
-    let result = await db.sequelize.transaction(async(t)=>{
-      await embed.insert(Artist, artist, includeArtistAndAlbums, {
-        transaction: t,
-        reload: true
-      })
+    let result = await db.sequelize.transaction(async(transaction)=>{
+      let tmpArtist = await embed.insert(Artist, artist, includeArtistAndAlbums, transaction);
+      return tmpArtist;
     })
-    console.log(result);
-    res.status(200).send()
+    //console.log(result);
+    res.status(200).send(result.dataValues);
   } catch(err){
     console.log(err);
     res.status(500).send({
@@ -42,7 +40,24 @@ exports.create = async (req,res) => {
     })
   }
 
+  /* Unmanaged transactions */
 
+  // const t = await db.sequelize.transaction();
+  // try {
+  //   const tmpArtist = await embed.insert(Artist, artist, includeArtistAndAlbums, t)
+  //   await t.commit();
+  //   res.status(200).send({
+  //     message: 'Success'
+  //   })
+  // } catch(err){
+  //     console.log(err);
+  //     await t.rollback();
+  //     res.status(500).send({
+  //       message: err.message || "Some error occurred while create an Artist"
+  //     })
+  // }
+
+  /* No Transaction */
   // embed.insert(Artist, artist, includeArtistAndAlbums)
   //   .then(data=>{
   //     res.send(data)
@@ -50,33 +65,6 @@ exports.create = async (req,res) => {
   //     console.log(err);
   //     res.status(500).send({
   //       message: err.message || "Some error occurred while create an Artist"
-  //     })
-  //   })
-
-  // try {
-  //   let result = await db.sequelize.transaction(async(t) => {
-  //     await Tutorial.create(tutorial, {transaction: t});
-  //   });
-  //   console.log('hit result');
-  //   console.log(result);
-  //   res.send(result);
-  // } catch (err){
-  //   // Rollback trnsaction only if the transaction object is defined
-  //   console.log(err);
-  //   res.status(500).send({
-  //     message: err.message || "SOme error occurred while create the Tutorial"
-  //   })
-  // }
-  
-
-  
-  // Save Tutorial in the database
-  // Tutorial.create(tutorial)
-  //   .then(data => {
-  //     res.send(data);
-  //   }).catch(err => {
-  //     res.status(500).send({
-  //       message: err.message || "Some error occurred while create athe Tutorial"
   //     })
   //   })
 };
