@@ -4,7 +4,8 @@ const Album = db.album;
 const Op = db.Sequelize.Op;
 const sequelize = require('sequelize');
 const embed = require('sequelize-embed')(db.sequelize);
-const { mkInclude } = embed.util.helpers
+const { mkInclude } = embed.util.helpers;
+const { v4: uuidv4 } = require('uuid');
 
 // Create and Save a new artist
 exports.create = async (req,res) => {
@@ -25,13 +26,18 @@ exports.create = async (req,res) => {
     albums: req.body.albums,
   }
   
+  // Assign unique id to every album
+  for(let i = 0; i<artist.albums.length; i++){
+    let uniqueId = "PIC-" + uuidv4();
+    artist.albums[i].internal_id = uniqueId;
+  }
+  
   /*  Managed Transaction */
   try {
     let result = await db.sequelize.transaction(async(transaction)=>{
       let tmpArtist = await embed.insert(Artist, artist, includeArtistAndAlbums, transaction);
       return tmpArtist;
     })
-    //console.log(result);
     res.status(200).send(result.dataValues);
   } catch(err){
     console.log(err);

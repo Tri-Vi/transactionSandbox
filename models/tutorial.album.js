@@ -5,6 +5,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     year: {
       type: Sequelize.INTEGER
+    },
+    internal_id: {
+      type: Sequelize.STRING
     }
   });
   return Album;
