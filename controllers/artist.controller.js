@@ -26,11 +26,6 @@ exports.create = async (req,res) => {
     albums: req.body.albums,
   }
   
-  // Assign unique id to every album
-  for(let i = 0; i<artist.albums.length; i++){
-    let uniqueId = "PIC-" + uuidv4();
-    artist.albums[i].internal_id = uniqueId;
-  }
   
   /*  Managed Transaction */
   try {
@@ -40,7 +35,6 @@ exports.create = async (req,res) => {
     })
     res.status(200).send(result.dataValues);
   } catch(err){
-    console.log(err);
     res.status(500).send({
       message: err.message || "Some error occurred while create an Artist"
     })
